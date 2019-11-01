@@ -748,11 +748,11 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
 
           def loadComments: List[JsValue] =
             List(JsObject(
-              "text" → JsString("First!"),
-              "author" → JsObject(
-                "name" → JsString("Jane"),
-                "lastComment" → JsObject(
-                  "text" → JsString("Boring...")))))
+              "text" -> JsString("First!"),
+              "author" -> JsObject(
+                "name" -> JsString("Jane"),
+                "lastComment" -> JsObject(
+                  "text" -> JsString("Boring...")))))
         }
 
         val ArticleType = deriveObjectType[Repo, Article]()
@@ -762,7 +762,7 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
         val QueryType = ObjectType("Query", fields[Repo, Unit](
           Field("article", OptionType(ArticleType),
             arguments = IdArg :: Nil,
-            resolve = c ⇒ c.ctx.loadArticle(c arg IdArg))))
+            resolve = c => c.ctx.loadArticle(c arg IdArg))))
 
         val staticSchema = Schema(QueryType)
 
@@ -791,16 +791,16 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
               definition: ast.FieldDefinition,
               mat: AstSchemaMaterializer[Repo]) =
             if (definition.directives.exists(_.name == "loadComments"))
-              c ⇒ c.ctx.loadComments
+              c => c.ctx.loadComments
             else
-              c ⇒ resolveJson(c.field.name, c.field.fieldType, c.value.asInstanceOf[JsValue])
+              c => resolveJson(c.field.name, c.field.fieldType, c.value.asInstanceOf[JsValue])
 
           def resolveJson(name: String, tpe: OutputType[_], json: JsValue): Any = tpe match {
-            case OptionType(ofType) ⇒ resolveJson(name, ofType, json)
-            case ListType(ofType) ⇒ json.asInstanceOf[JsArray].elements.map(resolveJson(name, ofType, _))
-            case StringType ⇒ json.asJsObject.fields(name).asInstanceOf[JsString].value
-            case _ if json.asJsObject.fields(name).isInstanceOf[JsObject] ⇒ json.asJsObject.fields(name)
-            case t ⇒ throw new IllegalStateException(s"Type ${SchemaRenderer.renderTypeName(t)} is not supported")
+            case OptionType(ofType) => resolveJson(name, ofType, json)
+            case ListType(ofType) => json.asInstanceOf[JsArray].elements.map(resolveJson(name, ofType, _))
+            case StringType => json.asJsObject.fields(name).asInstanceOf[JsString].value
+            case _ if json.asJsObject.fields(name).isInstanceOf[JsObject] => json.asJsObject.fields(name)
+            case t => throw new IllegalStateException(s"Type ${SchemaRenderer.renderTypeName(t)} is not supported")
           }
         }
 
@@ -1244,8 +1244,8 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
             }
           """
 
-        val ReturnCat = Directive("returnCat", locations = Set(DirectiveLocation.FieldDefinition), shouldInclude = _ ⇒ true)
-        val ReturnDog = Directive("returnDog", locations = Set(DirectiveLocation.FieldDefinition), shouldInclude = _ ⇒ true)
+        val ReturnCat = Directive("returnCat", locations = Set(DirectiveLocation.FieldDefinition), shouldInclude = _ => true)
+        val ReturnDog = Directive("returnDog", locations = Set(DirectiveLocation.FieldDefinition), shouldInclude = _ => true)
 
         val customBuilder = new DefaultAstSchemaBuilder[Unit] {
           override def resolveField(
@@ -1255,41 +1255,41 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
               definition: ast.FieldDefinition,
               mat: AstSchemaMaterializer[Unit]) =
             if (definition.directives.exists(_.name == ReturnCat.name))
-              _ ⇒ Map("type" → "Cat", "name" → "foo", "age" → Some(10))
+              _ => Map("type" -> "Cat", "name" -> "foo", "age" -> Some(10))
             else if (definition.directives.exists(_.name == ReturnDog.name))
-              _ ⇒ Map("type" → "Dog", "name" → "bar", "nickname" → Some("baz"))
+              _ => Map("type" -> "Dog", "name" -> "bar", "nickname" -> Some("baz"))
             else if (definition.name == "add")
-              ctx ⇒ ctx.arg[Int]("a") + ctx.arg[Int]("b")
+              ctx => ctx.arg[Int]("a") + ctx.arg[Int]("b")
             else
               _.value.asInstanceOf[Map[String, Any]](definition.name)
 
           override def objectTypeInstanceCheck(origin: MatOrigin, definition: ObjectTypeDefinition, extensions: List[ast.ObjectTypeExtensionDefinition]) =
-            Some((value, _) ⇒ value.asInstanceOf[Map[String, Any]]("type") == definition.name)
+            Some((value, _) => value.asInstanceOf[Map[String, Any]]("type") == definition.name)
 
           override def scalarCoerceUserInput(definition: ast.ScalarTypeDefinition) =
-            value ⇒ definition.name match {
-              case "Custom" ⇒ value match {
-                case i: Int ⇒ Right(i)
-                case i: BigInt ⇒ Right(i.intValue)
-                case _ ⇒ Left(IntCoercionViolation)
+            value => definition.name match {
+              case "Custom" => value match {
+                case i: Int => Right(i)
+                case i: BigInt => Right(i.intValue)
+                case _ => Left(IntCoercionViolation)
               }
-              case _ ⇒ Left(DefaultIntrospectionSchemaBuilder.MaterializedSchemaViolation)
+              case _ => Left(DefaultIntrospectionSchemaBuilder.MaterializedSchemaViolation)
             }
 
           override def scalarCoerceInput(definition: ast.ScalarTypeDefinition) =
-            value ⇒ definition.name match {
-              case "Custom" ⇒ value match {
-                case ast.IntValue(i, _, _) ⇒ Right(i)
-                case ast.BigIntValue(i, _, _) ⇒ Right(i.intValue)
-                case _ ⇒ Left(IntCoercionViolation)
+            value => definition.name match {
+              case "Custom" => value match {
+                case ast.IntValue(i, _, _) => Right(i)
+                case ast.BigIntValue(i, _, _) => Right(i.intValue)
+                case _ => Left(IntCoercionViolation)
               }
-              case _ ⇒ Left(DefaultIntrospectionSchemaBuilder.MaterializedSchemaViolation)
+              case _ => Left(DefaultIntrospectionSchemaBuilder.MaterializedSchemaViolation)
             }
 
           override def scalarCoerceOutput(definition: ast.ScalarTypeDefinition) =
-            (coerced, _) ⇒ definition.name match {
-              case "Custom" ⇒ ast.IntValue(coerced.asInstanceOf[Int])
-              case _ ⇒ throw DefaultIntrospectionSchemaBuilder.MaterializedSchemaException
+            (coerced, _) => definition.name match {
+              case "Custom" => ast.IntValue(coerced.asInstanceOf[Int])
+              case _ => throw DefaultIntrospectionSchemaBuilder.MaterializedSchemaException
             }
         }
 
@@ -1332,25 +1332,25 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
               }
             }
           """,
-          Map("data" →
+          Map("data" ->
             Map(
-              "add1" → 133,
-              "add2" → 153,
-              "add3" → 912,
-              "a1" → Map(
-                "name" → "bar",
-                "__typename" → "Dog"),
-              "a2" → Map(
-                "name" → "foo",
-                "__typename" → "Cat"),
-              "a3" → Map(
-                "__typename" → "Dog",
-                "name" → "bar",
-                "nickname" → "baz"),
-              "a4" → Map(
-                "__typename" → "Cat",
-                "name" → "foo",
-                "age" → 10))),
+              "add1" -> 133,
+              "add2" -> 153,
+              "add3" -> 912,
+              "a1" -> Map(
+                "name" -> "bar",
+                "__typename" -> "Dog"),
+              "a2" -> Map(
+                "name" -> "foo",
+                "__typename" -> "Cat"),
+              "a3" -> Map(
+                "__typename" -> "Dog",
+                "name" -> "bar",
+                "nickname" -> "baz"),
+              "a4" -> Map(
+                "__typename" -> "Cat",
+                "name" -> "foo",
+                "age" -> 10))),
           """{"v": 456}""".parseJson
         )
       }
@@ -1381,7 +1381,7 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
             typeDefinition: Either[ast.TypeDefinition, ObjectLikeType[Unit, _]],
             extensions: Vector[ast.ObjectLikeTypeExtensionDefinition],
             definition: ast.FieldDefinition,
-            mat: AstSchemaMaterializer[Unit]) = c ⇒ "test " + c.arg[String]("name")
+            mat: AstSchemaMaterializer[Unit]) = c => "test " + c.arg[String]("name")
         }
 
         val schema = Schema.buildFromAst(schemaAst, customBuilder)
@@ -1392,7 +1392,7 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
               addUser(name: "Bob")
             }
           """,
-          Map("data" → Map("addUser" → "test Bob")))
+          Map("data" -> Map("addUser" -> "test Bob")))
 
         schema.astDirectives.exists(_.name == "fromExt") should be (true)
       }
@@ -1419,7 +1419,7 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
             typeDefinition: Either[ast.TypeDefinition, ObjectLikeType[Unit, _]],
             extensions: Vector[ast.ObjectLikeTypeExtensionDefinition],
             definition: ast.FieldDefinition,
-            mat: AstSchemaMaterializer[Unit]) = c ⇒ "test " + c.arg[String]("name")
+            mat: AstSchemaMaterializer[Unit]) = c => "test " + c.arg[String]("name")
         }
 
         val schema = Schema.buildFromAst(schemaAst, customBuilder)
@@ -1430,7 +1430,7 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
               addUser(name: "Bob")
             }
           """,
-          Map("data" → Map("addUser" → "test Bob")))
+          Map("data" -> Map("addUser" -> "test Bob")))
 
         schema.astDirectives.exists(_.name == "fromExt") should be (true)
       }
@@ -1449,7 +1449,7 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
 
         val existingSchema =
           Schema(ObjectType("Query", fields[Unit, Unit](
-            Field("test", StringType, resolve = _ ⇒ "test"))))
+            Field("test", StringType, resolve = _ => "test"))))
 
         val customBuilder = new DefaultAstSchemaBuilder[Unit] {
           override def resolveField(
@@ -1457,7 +1457,7 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
             typeDefinition: Either[ast.TypeDefinition, ObjectLikeType[Unit, _]],
             extensions: Vector[ast.ObjectLikeTypeExtensionDefinition],
             definition: ast.FieldDefinition,
-            mat: AstSchemaMaterializer[Unit]) = c ⇒ "test " + c.arg[String]("name")
+            mat: AstSchemaMaterializer[Unit]) = c => "test " + c.arg[String]("name")
         }
 
         val schema = existingSchema.extend(schemaAst, customBuilder)
@@ -1468,7 +1468,7 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
               addUser(name: "Bob")
             }
           """,
-          Map("data" → Map("addUser" → "test Bob")))
+          Map("data" -> Map("addUser" -> "test Bob")))
 
         schema.astDirectives.exists(_.name == "fromExt") should be (true)
       }
@@ -1516,13 +1516,13 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
               definition: ast.FieldDefinition,
               mat: AstSchemaMaterializer[Unit]) =
             if (definition.name == "foo")
-              _ ⇒ Some(())
+              _ => Some(())
             else if (definition.name endsWith "None")
-              _ ⇒ Value(None)
+              _ => Value(None)
             else if (definition.name endsWith "Null")
-              _ ⇒ Value(null)
+              _ => Value(null)
             else
-              _ ⇒ Value(None)
+              _ => Value(None)
         }
 
         val schema = Schema.buildFromAst(schemaAst, customBuilder)
@@ -1544,18 +1544,18 @@ class AstSchemaMaterializerSpec extends WordSpec with Matchers with FutureResult
               }
             }
           """,
-          Map("foo" → null),
+          Map("foo" -> null),
           List(
-            """Cannot return null for non-nullable type""" → List(Pos(4, 17)),
-            """Cannot return null for non-nullable type""" → List(Pos(5, 17)),
-            """Cannot return null for non-nullable type""" → List(Pos(6, 17)),
-            """Cannot return null for non-nullable type""" → List(Pos(7, 17)),
-            """Cannot return null for non-nullable type""" → List(Pos(8, 17)),
-            """Cannot return null for non-nullable type""" → List(Pos(9, 17)),
-            """Cannot return null for non-nullable type""" → List(Pos(10, 17)),
-            """Cannot return null for non-nullable type""" → List(Pos(11, 17)),
-            """Cannot return null for non-nullable type""" → List(Pos(12, 17)),
-            """Cannot return null for non-nullable type""" → List(Pos(13, 17)))
+            """Cannot return null for non-nullable type""" -> List(Pos(4, 17)),
+            """Cannot return null for non-nullable type""" -> List(Pos(5, 17)),
+            """Cannot return null for non-nullable type""" -> List(Pos(6, 17)),
+            """Cannot return null for non-nullable type""" -> List(Pos(7, 17)),
+            """Cannot return null for non-nullable type""" -> List(Pos(8, 17)),
+            """Cannot return null for non-nullable type""" -> List(Pos(9, 17)),
+            """Cannot return null for non-nullable type""" -> List(Pos(10, 17)),
+            """Cannot return null for non-nullable type""" -> List(Pos(11, 17)),
+            """Cannot return null for non-nullable type""" -> List(Pos(12, 17)),
+            """Cannot return null for non-nullable type""" -> List(Pos(13, 17)))
         )
       }
     }

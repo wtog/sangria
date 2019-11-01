@@ -79,7 +79,7 @@ class UniqueDirectivesPerLocationSpec extends WordSpec with ValidationSupport {
           field @genericDirectiveA @genericDirectiveA
         }
       """,
-      "The directive 'genericDirectiveA' can only be used once at this location." → Seq(Pos(3, 17), Pos(3, 36)))
+      "The directive 'genericDirectiveA' can only be used once at this location." -> Seq(Pos(3, 17), Pos(3, 36)))
 
     "many duplicate directives in one location" in expectFailsSimple(
       """
@@ -87,8 +87,8 @@ class UniqueDirectivesPerLocationSpec extends WordSpec with ValidationSupport {
           field @genericDirectiveA @genericDirectiveA @genericDirectiveA
         }
       """,
-      "The directive 'genericDirectiveA' can only be used once at this location." → Seq(Pos(3, 17), Pos(3, 36)),
-      "The directive 'genericDirectiveA' can only be used once at this location." → Seq(Pos(3, 17), Pos(3, 55)))
+      "The directive 'genericDirectiveA' can only be used once at this location." -> Seq(Pos(3, 17), Pos(3, 36)),
+      "The directive 'genericDirectiveA' can only be used once at this location." -> Seq(Pos(3, 17), Pos(3, 55)))
 
     "different duplicate directives in one location" in expectFailsSimple(
       """
@@ -96,8 +96,8 @@ class UniqueDirectivesPerLocationSpec extends WordSpec with ValidationSupport {
           field @genericDirectiveA @genericDirectiveB @genericDirectiveA @genericDirectiveB
         }
       """,
-      "The directive 'genericDirectiveA' can only be used once at this location." → Seq(Pos(3, 17), Pos(3, 55)),
-      "The directive 'genericDirectiveB' can only be used once at this location." → Seq(Pos(3, 36), Pos(3, 74)))
+      "The directive 'genericDirectiveA' can only be used once at this location." -> Seq(Pos(3, 17), Pos(3, 55)),
+      "The directive 'genericDirectiveB' can only be used once at this location." -> Seq(Pos(3, 36), Pos(3, 74)))
 
     "duplicate directives in many locations" in expectFailsSimple(
       """
@@ -105,7 +105,7 @@ class UniqueDirectivesPerLocationSpec extends WordSpec with ValidationSupport {
           field @genericDirectiveA @genericDirectiveA
         }
       """,
-      "The directive 'genericDirectiveA' can only be used once at this location." → Seq(Pos(2, 31), Pos(2, 50)),
-      "The directive 'genericDirectiveA' can only be used once at this location." → Seq(Pos(3, 17), Pos(3, 36)))
+      "The directive 'genericDirectiveA' can only be used once at this location." -> Seq(Pos(2, 31), Pos(2, 50)),
+      "The directive 'genericDirectiveA' can only be used once at this location." -> Seq(Pos(3, 17), Pos(3, 36)))
   }
 }
