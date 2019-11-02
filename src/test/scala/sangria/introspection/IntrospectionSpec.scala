@@ -805,7 +805,7 @@ class IntrospectionSpec extends WordSpec with Matchers with FutureResultSupport 
     }
 
     "includes repeatable flag on directives" in {
-      val testType = ObjectType("TestType", fields[Unit, Unit](Field("foo", OptionType(StringType), resolve = _ ⇒ None)))
+      val testType = ObjectType("TestType", fields[Unit, Unit](Field("foo", OptionType(StringType), resolve = _ => None)))
       val repeatableDirective = Directive("test", repeatable = true, locations = Set(DirectiveLocation.Object, DirectiveLocation.Interface))
       val schema = Schema(testType, directives = repeatableDirective :: BuiltinDirectives)
 

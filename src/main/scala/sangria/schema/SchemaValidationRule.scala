@@ -508,7 +508,7 @@ class ResolvedDirectiveValidationRule(knownUniqueDirectives: Set[String]) extend
 
     val typeViolations =
       schema.typeList.collect {
-        case withDirs: HasAstInfo ⇒ validateUniqueDirectives(withDirs, uniqueDirectives, sourceMapper)
+        case withDirs: HasAstInfo => validateUniqueDirectives(withDirs, uniqueDirectives, sourceMapper)
       }
     
     schemaViolations.toList ++ typeViolations.flatten
@@ -516,12 +516,12 @@ class ResolvedDirectiveValidationRule(knownUniqueDirectives: Set[String]) extend
 
   private def validateUniqueDirectives(withDirs: HasAstInfo, uniqueDirectives: Set[String], sourceMapper: Option[SourceMapper]) = {
     val duplicates = withDirs.astDirectives
-        .filter(d ⇒ uniqueDirectives.contains(d.name))
+        .filter(d => uniqueDirectives.contains(d.name))
         .groupBy(_.name)
         .filter(_._2.size > 1)
         .toVector
 
-    duplicates.map{case (dirName, dups) ⇒ DuplicateDirectiveViolation(dirName, sourceMapper, dups.flatMap(_.location).toList)}
+    duplicates.map{case (dirName, dups) => DuplicateDirectiveViolation(dirName, sourceMapper, dups.flatMap(_.location).toList)}
   }
 }
 

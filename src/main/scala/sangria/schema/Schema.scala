@@ -755,7 +755,7 @@ case class Directive(
     arguments: List[Argument[_]] = Nil,
     locations: Set[DirectiveLocation.Value] = Set.empty,
     repeatable: Boolean = false,
-    shouldInclude: DirectiveContext ⇒ Boolean = _ => true) extends HasArguments with Named {
+    shouldInclude: DirectiveContext => Boolean = _ => true) extends HasArguments with Named {
   def rename(newName: String) = copy(name = newName).asInstanceOf[this.type]
   def toAst: ast.DirectiveDefinition = SchemaRenderer.renderDirective(this)
 }

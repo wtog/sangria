@@ -14,7 +14,7 @@ import scala.collection.mutable.{Map => MutableMap}
   */
 class UniqueDirectivesPerLocation extends ValidationRule {
   override def visitor(ctx: ValidationContext) = new AstValidatingVisitor {
-    val repeatableDirectives = ctx.schema.directivesByName.mapValues(d ⇒ d.repeatable)
+    val repeatableDirectives = ctx.schema.directivesByName.mapValues(d => d.repeatable)
 
     override val onEnter: ValidationVisit = {
       // Many different AST nodes may contain directives. Rather than listing

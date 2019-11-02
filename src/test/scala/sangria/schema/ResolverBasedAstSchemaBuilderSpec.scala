@@ -965,8 +965,8 @@ class ResolverBasedAstSchemaBuilderSpec extends WordSpec with Matchers with Futu
     "allow empty field list on types as long as provider contributes new fields" in {
       val TestDir = Directive("dir", locations = Set(DL.Object))
 
-      val builder = resolverBased[Any](DirectiveFieldProvider(TestDir, c ⇒ List(MaterializedField(c.origin,
-        Field("hello", c.scalarType("String"), resolve = (_: Context[Any, Any]) ⇒ "world")))))
+      val builder = resolverBased[Any](DirectiveFieldProvider(TestDir, c => List(MaterializedField(c.origin,
+        Field("hello", c.scalarType("String"), resolve = (_: Context[Any, Any]) => "world")))))
 
       val schemaAst = gql"type Query @dir"
 
@@ -974,7 +974,7 @@ class ResolverBasedAstSchemaBuilderSpec extends WordSpec with Matchers with Futu
 
       val query = gql"{hello}"
 
-      Executor.execute(schema, query).await should be (Map("data" → Map("hello" → "world")))
+      Executor.execute(schema, query).await should be (Map("data" -> Map("hello" -> "world")))
     }
   }
 }
