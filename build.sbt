@@ -40,7 +40,7 @@ libraryDependencies ++= Seq(
   "org.scala-lang" % "scala-reflect" % scalaVersion.value,
 
   // Testing
-  "co.fs2" %% "fs2-core" % "2.0.1" % Test,
+  "co.fs2" %% "fs2-core" % "2.1.0" % Test,
   "org.scalatest" %% "scalatest" % "3.0.8" % Test,
   "org.sangria-graphql" %% "sangria-marshalling-testkit" % "1.0.2" % Test,
   "org.sangria-graphql" %% "sangria-spray-json" % "1.0.2" % Test,
@@ -51,7 +51,7 @@ libraryDependencies ++= Seq(
 
   // CATs
   "net.jcazevedo" %% "moultingyaml" % "0.4.1" % Test,
-  "io.github.classgraph" % "classgraph" % "4.8.52" % Test
+  "io.github.classgraph" % "classgraph" % "4.8.53" % Test
 )
 
 // Publishing
