@@ -7,7 +7,7 @@ import sangria.renderer.QueryRenderer
 object queryAst {
   implicit val queryAstInputUnmarshaller = new QueryAstInputUnmarshaller
 
-  implicit val queryAstResultMarshaller = new QueryAstResultMarshaller
+  implicit val queryAstResultMarshaller: QueryAstResultMarshaller = new QueryAstResultMarshaller
 
   implicit object QueryAstMarshallerForType extends ResultMarshallerForType[ast.Value] {
     val marshaller = queryAstResultMarshaller

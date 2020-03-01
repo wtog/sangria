@@ -85,7 +85,7 @@ lazy val projectInfo = Seq(
 )
 
 lazy val scalaSettings = Seq(
-  scalaVersion := "2.13.1",
+  scalaVersion := "2.12.10",
   crossScalaVersions := Seq("2.11.12", "2.12.10", scalaVersion.value),
   scalacOptions ++= Seq(
     "-deprecation",
